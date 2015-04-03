@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+//import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Context;
@@ -24,8 +25,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.widget.Toast;
-
-public class DataHandler {
+public class DataHandler/* implements Runnable*/ {
 	private static final String TAG = "DataHandler";
 	// 股票查询网址
 	private static final String QUERY_URL = "http://hq.sinajs.cn/list=";
@@ -46,15 +46,18 @@ public class DataHandler {
 	private final int MAX_PRICE = 4;
 	private final int MIN_PRICE = 5;
 	Context context;
-
+//    public int type=0;
+//    public Bitmap bitmap;
+    Main stoker;
+    
 	public DataHandler(Context mContext) {
 		super();
 		// 读取存储在文件中的股票代码信息
-		// this.readStockFromFile();
+		 this.readStockFromFile();
 		context = mContext;
 		if (stocks != null) {
 			// 更新股票数据
-			// refreshStocks();
+			 refreshStocks();
 		}
 	}
 	//读取存储在文件中的股票代码信息
@@ -69,7 +72,7 @@ public class DataHandler {
 			BufferedReader bReader;
 			String quoteStr="";
 			//获取存储股票的文件
-			fullPath = new File("/data/data/com.supermario.stocker/files/symbols.txt");
+			fullPath = new File("/mnt/sdcard/symbols.txt");
 				//读取文件
 			try {
 				inStream = new FileInputStream(fullPath);
@@ -99,6 +102,7 @@ public class DataHandler {
 		}
 		//添加股票代码到文件中
 		public synchronized void addSymbolsToFile(ArrayList<String> stockList){
+			ArrayList<String> newStocks=new ArrayList<String>();
 			if(stockList != null){
 				//如果股票数组中没有数据
 				if(stocks == null || stocks.size() == 0){ 
@@ -111,7 +115,6 @@ public class DataHandler {
 					int c1 = stocks.size();
 					//欲添加的股票数组大小
 					int c2 = stockList.size();
-					ArrayList<String> newStocks = new ArrayList<String>();
 					//判断欲添加的股票代码是否在原来的数组中
 					boolean foundSymbol = false;
 					//循环遍历，查找出新股票
@@ -129,8 +132,8 @@ public class DataHandler {
 						}
 					}
 					if(newStocks.size() > 0){
-						
-						__addQuotes(newStocks);
+						//type=1;
+						__addQuotes(newStocks);//
 					}		
 				}
 				//保存股票
@@ -187,6 +190,7 @@ public class DataHandler {
 					int index, count = stocks.size();
 					//构建字符串写入文件中
 					buf.append(stocks.get(0));
+	  System.out.print(stocks.get(0));
 					for(index = 1; index < count; index++){
 						buf.append(",");
 						buf.append(stocks.get(index));
@@ -322,6 +326,7 @@ public class DataHandler {
 			long startTime = System.currentTimeMillis();
 			long endTime;
 			//取得股票的最新数据
+			//type=2;
 			getQuotesForArray(stocks);
 			endTime = System.currentTimeMillis();
 			Log.d(TAG, "Refresh ran for " + (endTime - startTime) + " millisenconds");
@@ -341,4 +346,19 @@ public class DataHandler {
 		public  StockInfo getQuoteForIndex(int index){
 			return stockInfo.get(index);
 }
+//		@Override
+//		public void run() {
+//			// TODO Auto-generated method stub
+//			if (type==1) {
+//				__addQuotes(newStocks);
+//				type=0;
+//			}
+//if (type==2) {
+//				getQuotesForArray(stocks);
+//				type=0;
+//			}
+//if (type==3) {
+//	bitmap=getChartForSymbol(stoker.quote.no);
+//}
+//		}
 }

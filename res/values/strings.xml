@@ -8,5 +8,6 @@
     <string name="enter_symbols">添加股票代码</string>    
     <string name="close">Close</string>    
     <string name="ok">OK</string>    
-    <string name="delete">删除</string>    
+    <string name="delete">删除</string>
+    <string name="exit">退出</string>    
 </resources>

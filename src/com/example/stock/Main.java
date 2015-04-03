@@ -23,7 +23,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class Main  extends ListActivity implements View.OnClickListener, KeyEvent.Callback {
-	//股票数据适配器
+	
+		//股票数据适配器
 		private QuoteAdapter quoteAdapter;
 		//股票代码输入框
 		private EditText symbolText;
@@ -34,6 +35,7 @@ public class Main  extends ListActivity implements View.OnClickListener, KeyEven
 		//删除按钮
 		private Button deleteButton;
 		//对话框
+		private Button exitButton;
 		private Dialog dialog = null;
 		//股票详细信息
 		private TextView currentTextView,noTextView, openTextView, closeTextView, dayLowTextView, dayHighTextView;
@@ -46,6 +48,7 @@ public class Main  extends ListActivity implements View.OnClickListener, KeyEven
 		//当前选中的股票的序号
 		int currentSelectedIndex;
 		//初始化界面
+		public  StockInfo quote;
 		public void onCreate(Bundle icicle) {
 			super.onCreate(icicle);
 			setContentView(R.layout.main);
@@ -100,7 +103,8 @@ public class Main  extends ListActivity implements View.OnClickListener, KeyEven
 		protected void onListItemClick(ListView l, View v, int position, long id){
 			super.onListItemClick(l,v, position, id);
 			//取得点击位置的股票
-			StockInfo quote = quoteAdapter.getItem(position);
+		      quote = quoteAdapter.getItem(position);
+			
 			//取得当前位置的序号
 			currentSelectedIndex=position;
 			if(dialog == null){
@@ -114,6 +118,8 @@ public class Main  extends ListActivity implements View.OnClickListener, KeyEven
 				cancelButton = (Button) dialog.findViewById(R.id.close);
 				//设置返回按钮监听器
 				cancelButton.setOnClickListener(this);
+				exitButton=(Button)this.findViewById(R.id.exit_symbols_button);
+				exitButton.setOnClickListener(this);
 				//当前股票价格
 				currentTextView = (TextView) dialog.findViewById(R.id.current);
 				//当前股票编码
@@ -179,31 +185,36 @@ public class Main  extends ListActivity implements View.OnClickListener, KeyEven
 //			System.out.println(symbolsStr);
 			String symbolArray[] = symbolsStr.split(" ");
 			int index, count = symbolArray.length;
-			ArrayList<String> symbolList = new ArrayList<String>();
+			final ArrayList<String> symbolList = new ArrayList<String>();
 			for(index = 0; index < count; index++){
 				symbolList.add(symbolArray[index]);
 				
 			}
 			//将股票代码添加进文件中
-			    
-					quoteAdapter.addSymbolsToFile(symbolList);
+			 
+			    	quoteAdapter.addSymbolsToFile(symbolList);
 					//设置文本框为空
 					symbolText.setText(null);
 			} 
 		
-
+		  
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			if(v == addButton){
 				//添加股票到文件中
-				
 				addSymbol();
-			} else if(v == cancelButton){
+			}
+			else if(v==exitButton)
+			{
+				finish();
+			}	
+				
+			 else if(v == cancelButton){
 				//关闭对话框
 				dialog.dismiss();
 			} else if(v == deleteButton){
-				//删除当前股票
+				//删除当前股票z
 				quoteAdapter.removeQuoteAtIndex(currentSelectedIndex);
 				dialog.dismiss();
 			} else if(v.getParent() instanceof RelativeLayout){
